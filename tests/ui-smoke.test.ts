@@ -50,6 +50,11 @@ describe('UI スモーク', () => {
       4000,
       '本編画面',
     );
+
+    // 初回は「あそびかた」が自動で開くので閉じる
+    await waitFor(() => document.querySelector('.panel--help') !== null, 4000, 'あそびかたパネル');
+    document.querySelector<HTMLButtonElement>('.panel--help .panel__foot .btn--primary')!.click();
+    await waitFor(() => document.querySelector('.panel--help') === null, 4000, 'あそびかたを閉じる');
     await waitFor(
       () => (document.querySelector('#dialogue-text')?.textContent ?? '').includes('午前零時'),
       8000,

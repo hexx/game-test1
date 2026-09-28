@@ -18,7 +18,7 @@ import { backgroundSVG } from './ui/backgrounds';
 import { el, qs } from './ui/dom';
 import { openEndingPanel } from './ui/ending-panel';
 import { closeOverlay, openOverlay, setupOverlay, toast } from './ui/overlay';
-import { openChaptersPanel, openJournalPanel, openSettingsPanel, openSavesPanel } from './ui/panels';
+import { openChaptersPanel, openHelpPanel, openJournalPanel, openSettingsPanel, openSavesPanel } from './ui/panels';
 import { StoryScreen } from './ui/story-screen';
 
 const AUTOSAVE_INTERVAL = 20_000;
@@ -88,6 +88,9 @@ class App {
             this.startGame(fresh, chapterId);
           });
           break;
+        case 'help':
+          openHelpPanel(() => this.applySettings({ ...this.settings, seenHelp: true }));
+          break;
         case 'journal':
           openJournalPanel(this.save);
           break;
@@ -101,7 +104,7 @@ class App {
     if (!hasAnySave()) {
       cont.classList.add('is-disabled');
       cont.disabled = true;
-      note.textContent = '「はじめから」を選ぶと、名前を決めて夜が始まります。';
+      note.textContent = '「はじめから」→ 名前を決めると、夜が始まります。操作は「あそびかた」に。';
     }
   }
 
@@ -192,12 +195,19 @@ class App {
       onExitToTitle: () => this.toTitle(),
       openJournal: () => openJournalPanel(this.save),
       openSettings: () => openSettingsPanel(this.settings, (s) => this.applySettings(s)),
+      openHelp: () => openHelpPanel(),
       loadSlot: (slot) => this.load(slot),
       notify: (message) => toast(message),
     });
     this.story = story;
     this.showScreen('game');
     void story.start();
+    // 初回だけ、操作説明を自動で開く
+    if (!this.settings.seenHelp) {
+      window.setTimeout(() => {
+        openHelpPanel(() => this.applySettings({ ...this.settings, seenHelp: true }));
+      }, 600);
+    }
   }
 
   private load(slot: SlotId): void {

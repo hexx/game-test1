@@ -47,7 +47,6 @@ export async function runBrewPanel(view: OrderView): Promise<BrewOutcome> {
   head.append(portrait, headText);
 
   const body = el('div', 'order__body');
-
   // 左：カップと温度
   const left = el('div', 'order__left');
   const cupBox = el('div', 'order__cup');
@@ -96,7 +95,7 @@ export async function runBrewPanel(view: OrderView): Promise<BrewOutcome> {
   brewBtn.type = 'button';
   foot.append(notesBtn, errorMsg, brewBtn);
 
-  panel.append(head, body, foot);
+  panel.append(head, el('p', 'order__guide', 'ベースを1つ → アレンジを2つまで → 温度 → 「淹れる」'), body, foot);
   openOverlay(panel, { dismissible: false, className: 'panel--wide' });
 
   function buildNotes(): HTMLElement {
@@ -146,6 +145,16 @@ export async function runBrewPanel(view: OrderView): Promise<BrewOutcome> {
     }
     hotBtn.classList.toggle('is-active', temp === 'hot');
     iceBtn.classList.toggle('is-active', temp === 'iced');
+
+    // 選んだ内容がそのまま提供できない場合は、先に理由を出す
+    if (selected.length > 0) {
+      const check = validateSelection(selected);
+      errorMsg.textContent = check.ok ? '' : check.reason ?? '';
+      brewBtn.classList.toggle('is-disabled', !check.ok);
+    } else {
+      errorMsg.textContent = '';
+      brewBtn.classList.remove('is-disabled');
+    }
 
     if (selected.length === 0) {
       cupBox.innerHTML = cupSVG({ color: '#3a3348', temperature: temp, size: 190 });

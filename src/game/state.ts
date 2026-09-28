@@ -14,6 +14,8 @@ export interface Settings {
   sfx: number; // 0..1
   muted: boolean;
   showHints: boolean;
+  /** 操作説明を一度読んだか */
+  seenHelp: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -24,6 +26,7 @@ export const DEFAULT_SETTINGS: Settings = {
   sfx: 0.6,
   muted: false,
   showHints: true,
+  seenHelp: false,
 };
 
 export function createSave(name = 'カイ'): SaveData {

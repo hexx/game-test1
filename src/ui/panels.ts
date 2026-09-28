@@ -19,6 +19,75 @@ import { el, clear } from './dom';
 import { closeOverlay, openOverlay, toast } from './overlay';
 
 /* ------------------------------------------------------------------ *
+ * あそびかた
+ * ------------------------------------------------------------------ */
+
+interface HelpRow {
+  key: string;
+  desc: string;
+}
+
+const HELP_ROWS: { title: string; rows: HelpRow[] }[] = [
+  {
+    title: '物語を進める',
+    rows: [
+      { key: 'クリック / スペース / Enter', desc: 'セリフを進めます。表示中にもう一度押すと、その行を最後まで表示します。' },
+      { key: 'AUTO', desc: 'セリフを自動で送ります。もう一度押すと止まります。' },
+      { key: 'SKIP / Ctrl を押しっぱなし', desc: '早送りします。選択肢と注文では自動で止まります。' },
+      { key: '選択肢', desc: 'この店での返事です。どれを選んでも物語は進み、常連たちとの距離が変わります。' },
+    ],
+  },
+  {
+    title: '飲み物を出す（注文）',
+    rows: [
+      { key: '1. ベースを1つ', desc: 'コーヒー / 紅茶 / 緑茶 / チョコレート / ミルク のどれか。これが土台になります。' },
+      { key: '2. アレンジを2つまで', desc: 'はちみつ、シナモン、レモンなどを追加します（0個でも構いません）。' },
+      { key: '3. 温度', desc: 'HOT / ICE を選びます。』冷たいの』と言われたら ICE です。' },
+      { key: '4. 淹れる', desc: '“淹れる”を押すと提供します。迷ったら右上の「店主のメモ」を見てください。' },
+      { key: '店主のメモ', desc: '客がヒントをくれた場合はここに残ります（設定で非表示にもできます）。' },
+    ],
+  },
+  {
+    title: '壺の中の味の読み方',
+    rows: [
+      { key: 'レーダー（6軸）', desc: '苦味・甘味・酸味・香辛・香り・まろやか。いま選んでいる材料の味です。' },
+      { key: '破線のグラフ', desc: '「温かくて甘いもの」のような味の注文で、客が求めている形（目標）を示します。近づけるほど評価が上がります。' },
+      { key: '薄まり', desc: '材料を増やすほど、ひとつぶんの味は薄まります。強くしたい軸を先に決めましょう。' },
+    ],
+  },
+  {
+    title: '記録について',
+    rows: [
+      { key: 'オートセーブ', desc: '各シーンの頭で自動的に保存されます。' },
+      { key: 'セーブ / ロード', desc: 'MENU（または Esc）から。スロットは3つ＋オートセーブです。' },
+      { key: 'レシピ帳', desc: '初めて淹れた組み合わせが記録され、店主のメモもここに集まります。' },
+      { key: '信頼度', desc: '正しい一杯を出すほど、常連たちとの距離が近づきます。それが、最後の夜に効いてきます。' },
+    ],
+  },
+];
+
+export function openHelpPanel(onDismiss?: () => void): void {
+  const panel = el('div', 'panel panel--help');
+  panel.append(el('h2', 'panel__title', 'あそびかた'));
+  panel.append(el('p', 'panel__desc', 'この店は、話を聴いて、一杯を作るだけの場所です。'));
+  for (const section of HELP_ROWS) {
+    panel.append(el('h3', 'help__title', section.title));
+    const list = el('dl', 'help__list');
+    for (const row of section.rows) {
+      list.append(el('dt', 'help__key', row.key), el('dd', 'help__desc', row.desc));
+    }
+    panel.append(list);
+  }
+  const foot = el('footer', 'panel__foot');
+  const close = el('button', 'btn btn--primary', '閉じる');
+  close.type = 'button';
+  close.addEventListener('click', () => closeOverlay());
+  foot.append(close);
+  panel.append(foot);
+  openOverlay(panel, { dismissible: true, className: 'panel--wide', onDismiss });
+}
+
+/* ------------------------------------------------------------------ *
  * レシピ帳
  * ------------------------------------------------------------------ */
 

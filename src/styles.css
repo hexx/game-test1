@@ -380,6 +380,16 @@ button {
   background: rgba(240, 192, 116, 0.14);
 }
 
+.hud__btn--round {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  font-size: 14px;
+  border-radius: 50%;
+}
+
 /* ------------------------------- stage ------------------------------ */
 .stage {
   position: absolute;
@@ -566,6 +576,26 @@ button {
   letter-spacing: 0.03em;
   min-height: 3.6em;
   white-space: pre-wrap;
+}
+
+.dialogue__hint {
+  position: absolute;
+  right: 40px;
+  bottom: 12px;
+  color: var(--ink-faint);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  animation: hint-blink 2.2s ease-in-out infinite;
+}
+
+@keyframes hint-blink {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.95;
+  }
 }
 
 .dialogue__next {
@@ -1226,12 +1256,26 @@ button {
   font-size: 12px;
 }
 
+.order__guide {
+  margin: -4px 0 0;
+  color: var(--ink-faint);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
 .order__foot {
+  position: sticky;
+  bottom: -22px;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding-top: 10px;
+  margin: 0 -22px -22px;
+  padding: 12px 22px 22px;
   border-top: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(20, 16, 30, 0.75), var(--panel-bg) 45%);
+  backdrop-filter: blur(6px);
 }
 
 .order__error {
@@ -1394,6 +1438,35 @@ button {
   width: 100%;
   justify-content: center;
   border-top: none;
+}
+
+/* ------------------------------- help ------------------------------- */
+.help__title {
+  margin: 10px 0 0;
+  color: var(--amber);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+}
+
+.help__list {
+  display: grid;
+  grid-template-columns: 12em 1fr;
+  gap: 6px 14px;
+  margin: 0;
+}
+
+.help__key {
+  color: var(--cool);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.help__desc {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 13px;
+  line-height: 1.8;
 }
 
 /* --------------------------- ending panel --------------------------- */
@@ -1623,6 +1696,20 @@ button {
 
   .setting {
     grid-template-columns: 6.5em 1fr auto;
+  }
+
+  .help__list {
+    grid-template-columns: 1fr;
+    gap: 2px 0;
+  }
+
+  .help__desc {
+    margin-bottom: 8px;
+  }
+
+  .dialogue__hint {
+    right: 34px;
+    font-size: 10px;
   }
 }
 

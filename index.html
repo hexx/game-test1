@@ -39,10 +39,11 @@
             <button class="btn btn--primary" data-action="new">はじめから</button>
             <button class="btn" data-action="continue">つづきから</button>
             <button class="btn" data-action="chapters">章をえらぶ</button>
+            <button class="btn" data-action="help">あそびかた</button>
             <button class="btn" data-action="journal">レシピ帳</button>
             <button class="btn" data-action="settings">設定</button>
           </nav>
-          <p class="title__note" id="title-note">ヘッドホン推奨。音が出ます。</p>
+          <p class="title__note" id="title-note">セリフはクリック / スペースで進みます。ヘッドホン推奨。</p>
           <p class="title__credit">オリジナル作品 / inspired by the genre of cozy late-night visual novels</p>
         </div>
       </section>
@@ -63,6 +64,7 @@
           </div>
           <div class="hud__group">
             <button class="hud__btn" id="btn-journal" type="button">レシピ帳</button>
+            <button class="hud__btn hud__btn--round" id="btn-help" type="button" aria-label="あそびかた" title="あそびかた">？</button>
             <button class="hud__btn" id="btn-menu" type="button">MENU</button>
           </div>
         </div>
@@ -71,6 +73,7 @@
           <div class="dialogue__body">
             <p class="dialogue__text" id="dialogue-text"></p>
           </div>
+          <span class="dialogue__hint" id="next-hint" hidden>クリック / スペース で進む</span>
           <span class="dialogue__next" id="next-mark" aria-hidden="true"></span>
         </div>
         <div class="choices" id="choices" hidden></div>

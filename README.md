@@ -87,6 +87,16 @@ npx wrangler kv namespace create ENDINGS
 
 未設定でもデプロイは成功し、`/api/endings` は 501、ゲーム側は静かに無効化します。
 
+## 開発メモ（つまずきやすい点）
+
+- `hidden` 属性はブラウザ既定（UAオリジン）のスタイルなので、**作者CSSの `display` 指定に負ける**。
+  `.overlay { display: grid }` のような指定があると `hidden` が効かず、「透明な全画面オーバーレイが
+  クリックを吸い続ける」事故になる。そのため `src/styles.css` の先頭で
+  `[hidden] { display: none !important; }` を宣言し、`tests/css-contract.test.ts` で担保している。
+- 立ち絵の位置（`center/left/right`）は同じ章のなかで重複させない。
+  `tests/staging.test.ts` が検出する（章の変わり目は物語側が舞台を空にする）。
+- シナリオのジャンプ先・材料の実在・通し再生は `tests/script.test.ts` が見ている。
+
 ## ライセンス / 注意
 
 - このリポジトリのコードとシナリオはオリジナルです。『Coffee Talk』（Toge Productions）とは無関係です。

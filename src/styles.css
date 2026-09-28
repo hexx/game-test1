@@ -30,6 +30,12 @@
   box-sizing: border-box;
 }
 
+/* hidden 属性は、作者CSSの display 指定（.overlay { display: grid } など）より必ず優先する。
+   これが無いと「透明な全画面オーバーレイがクリックを吸い続ける」事故になる。 */
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
@@ -738,6 +744,12 @@ button {
   backdrop-filter: blur(6px);
   opacity: 0;
   transition: opacity 0.3s ease;
+}
+
+/* 開いていないあいだは、たとえ描画されてもクリックを奪わない */
+.overlay:not(.is-open),
+.chapter-card:not(.is-open) {
+  pointer-events: none;
 }
 
 .overlay.is-open .overlay__backdrop {

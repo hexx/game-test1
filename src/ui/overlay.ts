@@ -14,8 +14,10 @@ export function openOverlay(node: HTMLElement, opts: OverlayOptions = {}): void 
   root.hidden = false;
   panel.className = `overlay__panel ${opts.className ?? ''}`.trim();
   panel.replaceChildren(node);
-  root.classList.add('is-open');
   root.dataset.dismissible = opts.dismissible ? '1' : '0';
+  // 表示を確定させてから is-open を付ける（フェードインを効かせるため）
+  root.classList.remove('is-open');
+  requestAnimationFrame(() => root.classList.add('is-open'));
   (root as HTMLElement & { __onDismiss?: () => void }).__onDismiss = opts.onDismiss;
 }
 

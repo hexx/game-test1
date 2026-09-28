@@ -30,6 +30,7 @@ class App {
   story: StoryScreen | null = null;
   private lastTick = Date.now();
   private audioReady = false;
+  private helpTimer: number | null = null;
 
   boot(): void {
     setupOverlay();
@@ -89,7 +90,7 @@ class App {
           });
           break;
         case 'help':
-          openHelpPanel(() => this.applySettings({ ...this.settings, seenHelp: true }));
+          this.openHelp();
           break;
         case 'journal':
           openJournalPanel(this.save);
@@ -195,19 +196,35 @@ class App {
       onExitToTitle: () => this.toTitle(),
       openJournal: () => openJournalPanel(this.save),
       openSettings: () => openSettingsPanel(this.settings, (s) => this.applySettings(s)),
-      openHelp: () => openHelpPanel(),
+      openHelp: () => this.openHelp(),
       loadSlot: (slot) => this.load(slot),
       notify: (message) => toast(message),
     });
     this.story = story;
     this.showScreen('game');
     void story.start();
-    // 初回だけ、操作説明を自動で開く
+    // 初回だけ、操作説明を自動で開く（別の画面に移ったら開かない）
     if (!this.settings.seenHelp) {
-      window.setTimeout(() => {
-        openHelpPanel(() => this.applySettings({ ...this.settings, seenHelp: true }));
+      if (this.helpTimer !== null) window.clearTimeout(this.helpTimer);
+      this.helpTimer = window.setTimeout(() => {
+        this.helpTimer = null;
+        if (this.settings.seenHelp || this.story !== story) return;
+        this.openHelp();
       }, 600);
     }
+  }
+
+  /** 「あそびかた」を開き、閉じたら既読にする */
+  private openHelp(): void {
+    openHelpPanel(() => this.markHelpSeen());
+  }
+
+  private markHelpSeen(): void {
+    if (this.helpTimer !== null) {
+      window.clearTimeout(this.helpTimer);
+      this.helpTimer = null;
+    }
+    if (!this.settings.seenHelp) this.applySettings({ ...this.settings, seenHelp: true });
   }
 
   private load(slot: SlotId): void {
@@ -256,6 +273,10 @@ class App {
     this.story?.stop();
     this.story = null;
     this.engine = null;
+    if (this.helpTimer !== null) {
+      window.clearTimeout(this.helpTimer);
+      this.helpTimer = null;
+    }
     this.showScreen('title');
     audio.setAmbience('rain');
   }

@@ -8,6 +8,9 @@ export interface OverlayOptions {
   onDismiss?: () => void;
 }
 
+/** open/close の競合で古い rAF が新しいパネルを開いてしまわないようにする世代番号 */
+let overlayGeneration = 0;
+
 export function openOverlay(node: HTMLElement, opts: OverlayOptions = {}): void {
   const root = qs('#overlay');
   const panel = qs('#overlay-panel');
@@ -17,13 +20,18 @@ export function openOverlay(node: HTMLElement, opts: OverlayOptions = {}): void 
   root.dataset.dismissible = opts.dismissible ? '1' : '0';
   // 表示を確定させてから is-open を付ける（フェードインを効かせるため）
   root.classList.remove('is-open');
-  requestAnimationFrame(() => root.classList.add('is-open'));
+  const generation = (overlayGeneration += 1);
+  requestAnimationFrame(() => {
+    if (root.hidden || generation !== overlayGeneration) return;
+    root.classList.add('is-open');
+  });
   (root as HTMLElement & { __onDismiss?: () => void }).__onDismiss = opts.onDismiss;
 }
 
 export function closeOverlay(force = false): void {
   const root = qs('#overlay');
   if (root.hidden) return;
+  overlayGeneration += 1;
   // 閉じられないパネル（注文・結果・エンディング）は force でのみ閉じる
   if (!force && root.dataset.dismissible !== '1') return;
   const onDismiss = (root as HTMLElement & { __onDismiss?: () => void }).__onDismiss;

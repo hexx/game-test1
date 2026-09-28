@@ -1,6 +1,6 @@
 import { audio } from '../audio/audio';
 import { CHARACTERS } from '../game/characters';
-import { INGREDIENTS, RECIPES, makeDrink, validateSelection } from '../game/ingredients';
+import { INGREDIENTS, INGREDIENT_MAP, RECIPES, makeDrink, validateSelection } from '../game/ingredients';
 import type { CharId, Drink, Grade, IngredientId, Order, Temperature } from '../game/types';
 import { artLabel, cupSVG, radarSVG, type LatteArt } from './cup';
 import { el, qs } from './dom';
@@ -69,7 +69,7 @@ export async function runBrewPanel(view: OrderView): Promise<BrewOutcome> {
   const right = el('div', 'order__right');
   const baseTitle = el('h3', 'order__section', 'ベース');
   const baseGrid = el('div', 'ingredients');
-  const addTitle = el('h3', 'order__section', 'アレンジ（3つまで）');
+  const addTitle = el('h3', 'order__section', 'アレンジ（2つまで）');
   const addGrid = el('div', 'ingredients');
   const buttons = new Map<IngredientId, HTMLButtonElement>();
   for (const ing of INGREDIENTS) {
@@ -126,8 +126,14 @@ export async function runBrewPanel(view: OrderView): Promise<BrewOutcome> {
     if (index >= 0) {
       selected.splice(index, 1);
     } else {
-      if (selected.length >= MAX_INGREDIENTS) {
+      const next = [...selected, id];
+      if (next.length > MAX_INGREDIENTS) {
         errorMsg.textContent = '材料は3つまでです';
+        return;
+      }
+      // ベースが無いまま枠を使い切ると、提供できない一杯になってしまうので先に止める
+      if (next.length === MAX_INGREDIENTS && !next.some((x) => INGREDIENT_MAP[x].base)) {
+        errorMsg.textContent = 'ベース（コーヒー・紅茶・緑茶・チョコレート・ミルク）を入れてください';
         return;
       }
       selected.push(id);

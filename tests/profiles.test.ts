@@ -80,16 +80,38 @@ describe('登場人物名鑑', () => {
     for (const who of PROFILE_ORDER) {
       expect(isMet(save, who)).toBe(false);
       expect(usualText(PROFILES[who], save, false)).toContain('？？？');
-      expect(secretText(PROFILES[who], save)).toBeNull();
+      expect(secretText(PROFILES[who], save, false)).toBeNull();
     }
+  });
+
+  it('フラグが立っていても、出会っていなければ秘密は伏せる', () => {
+    const save = createSave();
+    save.flags.sera_home = true; // 進行フラグだけがある不整合なセーブ
+    expect(secretText(PROFILES.sera, save, false)).toBeNull();
+    expect(secretText(PROFILES.sera, save, true)).toContain('村の家');
   });
 
   it('信頼度が上がると秘密が読めるようになる', () => {
     const save = createSave();
     save.trust.sera = 6;
     save.flags.sera_home = true;
-    expect(secretText(PROFILES.sera, save)).toContain('村の家');
+    expect(secretText(PROFILES.sera, save, isMet(save, 'sera'))).toContain('村の家');
     expect(isMet(save, 'sera')).toBe(true); // 旧セーブ互換（trust から推定）
+  });
+
+  it('信頼度0の人を「出会った」と数えない（旧セーブの復元）', async () => {
+    const { importSave, exportSave } = await import('../src/game/state');
+    const legacy = { ...createSave('テスト'), trust: { yuki: 0, luca: 2 }, met: undefined };
+    const restored = importSave(exportSave(legacy as unknown as SaveData));
+    expect(restored?.met).toEqual(['luca']);
+  });
+
+  it('壊れた材料ID（toString など）でも落ちない', () => {
+    const save = createSave();
+    save.met = ['mira'];
+    save.flags.mira_favorite = 'toString@iced';
+    expect(() => usualText(PROFILES.mira, save, true)).not.toThrow();
+    expect(usualText(PROFILES.mira, save, true)).toContain('まだ決まっていない');
   });
 
   it('ミラの「いつもの一杯」は、プレイヤーが淹れた一杯になる', () => {

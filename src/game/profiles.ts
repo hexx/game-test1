@@ -35,7 +35,7 @@ const trustAtLeast = (who: CharId, value: number) => (s: SaveData) => (s.trust[w
 function describeSavedDrink(raw: unknown): string | null {
   if (typeof raw !== 'string' || !raw.includes('@')) return null;
   const [idsPart, tempPart] = raw.split('@');
-  const ids = idsPart.split('+').filter((id) => id in INGREDIENT_MAP);
+  const ids = idsPart.split('+').filter((id) => Object.hasOwn(INGREDIENT_MAP, id));
   if (ids.length === 0) return null;
   const recipe = RECIPES.find((r) => r.key === [...ids].sort().join('+'));
   const names = ids.map((id) => INGREDIENT_MAP[id as keyof typeof INGREDIENT_MAP].name).join('・');
@@ -227,6 +227,7 @@ export function usualText(profile: CharProfile, save: SaveData | null, met: bool
   return base;
 }
 
-export function secretText(profile: CharProfile, save: SaveData | null): string | null {
-  return save && profile.secret.when(save) ? profile.secret.text : null;
+/** 「もうひとつの顔」は、まだ出会っていない人には伏せる */
+export function secretText(profile: CharProfile, save: SaveData | null, met: boolean): string | null {
+  return met && save && profile.secret.when(save) ? profile.secret.text : null;
 }

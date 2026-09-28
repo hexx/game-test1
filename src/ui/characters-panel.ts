@@ -2,7 +2,7 @@ import { CHARACTERS } from '../game/characters';
 import { PROFILES, PROFILE_ORDER, isMet, secretText, usualText } from '../game/profiles';
 import type { CharId, Mood, SaveData } from '../game/types';
 import { audio } from '../audio/audio';
-import { el, escapeHtml } from './dom';
+import { clamp, el, escapeHtml } from './dom';
 import { closeOverlay, openOverlay } from './overlay';
 import { spriteSVG } from './sprite';
 
@@ -40,8 +40,8 @@ export function openCharactersPanel(save: SaveData | null): void {
     const def = CHARACTERS[current];
     const profile = PROFILES[current];
     const met = isMet(save, current);
-    const secret = secretText(profile, save);
-    const trust = save?.trust[current] ?? 0;
+    const secret = secretText(profile, save, met);
+    const trust = clamp(Number(save?.trust[current] ?? 0) || 0, 0, 99);
 
     detail.replaceChildren();
 
@@ -166,5 +166,5 @@ export function openCharactersPanel(save: SaveData | null): void {
   foot.append(close);
   panel.append(foot);
 
-  openOverlay(panel, { dismissible: true, className: 'panel--wide' });
+  openOverlay(panel, { dismissible: true });
 }

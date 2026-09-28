@@ -96,7 +96,7 @@ export async function runBrewPanel(view: OrderView): Promise<BrewOutcome> {
   foot.append(notesBtn, errorMsg, brewBtn);
 
   panel.append(head, el('p', 'order__guide', 'ベースを1つ → アレンジを2つまで → 温度 → 「淹れる」'), body, foot);
-  openOverlay(panel, { dismissible: false, className: 'panel--wide' });
+  openOverlay(panel, { dismissible: false });
 
   function buildNotes(): HTMLElement {
     const box = el('div', 'order__notes');

@@ -94,10 +94,10 @@ class App {
           this.openHelp();
           break;
         case 'journal':
-          openJournalPanel(this.save);
+          openJournalPanel(this.currentSaveOrLatest());
           break;
         case 'cast':
-          openCharactersPanel(this.save);
+          openCharactersPanel(this.currentSaveOrLatest());
           break;
         case 'settings':
           openSettingsPanel(this.settings, (s) => this.applySettings(s));
@@ -111,6 +111,11 @@ class App {
       cont.disabled = true;
       note.textContent = '「はじめから」→ 名前を決めると、夜が始まります。操作は「あそびかた」に。';
     }
+  }
+
+  /** 本編に入っていなくても、保存済みの最新セーブを名鑑・レシピ帳に使う */
+  private currentSaveOrLatest(): SaveData | null {
+    return this.save ?? latestSave()?.data ?? null;
   }
 
   private async askName(defaultName = 'カイ'): Promise<string | null> {

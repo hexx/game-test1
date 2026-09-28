@@ -182,6 +182,8 @@ export class StoryScreen {
     const met = this.deps.save.met ?? [];
     if (met.includes(who)) return;
     this.deps.save.met = [...met, who];
+    // 名鑑の解放は取りこぼしたくないので、その場で保存する
+    this.deps.onAutosave();
   }
 
   private removeCast(who: CharId): void {
@@ -357,6 +359,8 @@ export class StoryScreen {
 
   async start(): Promise<void> {
     this.running = true;
+    // 主人公は最初から名鑑に載っている（立ち絵として登場しないため）
+    this.markMet('kai');
     this.deps.engine.onAutosave = () => this.deps.onAutosave();
     const scene = this.deps.engine.currentScene;
     const bgId = (this.deps.save.flags.__bg as BgId) ?? scene.bg ?? 'cafe-night';

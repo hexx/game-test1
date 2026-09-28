@@ -85,7 +85,7 @@ export function openHelpPanel(onDismiss?: () => void): void {
   close.addEventListener('click', () => closeOverlay());
   foot.append(close);
   panel.append(foot);
-  openOverlay(panel, { dismissible: true, className: 'panel--wide', onDismiss });
+  openOverlay(panel, { dismissible: true, onDismiss });
 }
 
 /* ------------------------------------------------------------------ *
@@ -195,7 +195,7 @@ export function openJournalPanel(save: SaveData | null): void {
   foot.append(close);
   panel.append(foot);
 
-  openOverlay(panel, { dismissible: true, className: 'panel--wide' });
+  openOverlay(panel, { dismissible: true });
 }
 
 /* ------------------------------------------------------------------ *
@@ -441,6 +441,6 @@ export function openLogPanel(lines: LogLine[]): void {
   close.addEventListener('click', () => closeOverlay());
   foot.append(close);
   panel.append(foot);
-  openOverlay(panel, { dismissible: true, className: 'panel--wide' });
+  openOverlay(panel, { dismissible: true });
   body.scrollTop = body.scrollHeight;
 }

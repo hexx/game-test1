@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0d1a" />
+    <meta
+      name="description"
+      content="真夜中ブレンド - 眠れない客が集まる深夜喫茶のビジュアルノベル。一杯の飲み物が、誰かの夜を変えていく。"
+    />
+    <title>真夜中ブレンド | Midnight Blend</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <meta property="og:title" content="真夜中ブレンド" />
+    <meta property="og:description" content="眠れない客が集まる深夜喫茶のビジュアルノベル。" />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <div id="app">
+      <div class="boot" id="boot">
+        <div class="boot__cup">
+          <svg viewBox="0 0 64 64" aria-hidden="true">
+            <path d="M12 20h34v16a17 17 0 0 1-17 17 17 17 0 0 1-17-17V20Z" fill="none" stroke="currentColor" stroke-width="3" />
+            <path d="M46 24h4a8 8 0 0 1 0 16h-4" fill="none" stroke="currentColor" stroke-width="3" />
+            <path d="M22 10c0 4 4 4 4 8M32 6c0 4 4 4 4 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+          </svg>
+        </div>
+        <p class="boot__text">豆を挽いています…</p>
+      </div>
+
+      <!-- タイトル -->
+      <section id="screen-title" class="screen screen--title is-active">
+        <div class="bg-layer" id="title-bg"></div>
+        <div class="title__panel">
+          <p class="title__kicker">CAFE NOCTURNAL</p>
+          <h1 class="title__logo">真夜中<em>ブレンド</em></h1>
+          <p class="title__sub">眠れない夜の、一杯の話。</p>
+          <nav class="title__menu">
+            <button class="btn btn--primary" data-action="new">はじめから</button>
+            <button class="btn" data-action="continue">つづきから</button>
+            <button class="btn" data-action="chapters">章をえらぶ</button>
+            <button class="btn" data-action="journal">レシピ帳</button>
+            <button class="btn" data-action="settings">設定</button>
+          </nav>
+          <p class="title__note" id="title-note">ヘッドホン推奨。音が出ます。</p>
+          <p class="title__credit">オリジナル作品 / inspired by the genre of cozy late-night visual novels</p>
+        </div>
+      </section>
+
+      <!-- 本編 -->
+      <section id="screen-game" class="screen screen--game">
+        <div class="stage" id="stage">
+          <div class="bg-layer" id="bg-layer"></div>
+          <div class="cast" id="cast"></div>
+          <div class="stage__vignette"></div>
+          <div class="stage__flash" id="stage-flash"></div>
+        </div>
+        <div class="hud">
+          <div class="hud__group">
+            <button class="hud__btn" id="btn-log" type="button">履歴</button>
+            <button class="hud__btn" id="btn-auto" type="button">AUTO</button>
+            <button class="hud__btn" id="btn-skip" type="button">SKIP</button>
+          </div>
+          <div class="hud__group">
+            <button class="hud__btn" id="btn-journal" type="button">レシピ帳</button>
+            <button class="hud__btn" id="btn-menu" type="button">MENU</button>
+          </div>
+        </div>
+        <div class="dialogue" id="dialogue" hidden>
+          <div class="dialogue__name" id="speaker-name"></div>
+          <div class="dialogue__body">
+            <p class="dialogue__text" id="dialogue-text"></p>
+          </div>
+          <span class="dialogue__next" id="next-mark" aria-hidden="true"></span>
+        </div>
+        <div class="choices" id="choices" hidden></div>
+        <div class="chapter-card" id="chapter-card" hidden></div>
+      </section>
+
+      <!-- オーバーレイ（注文・メニュー・レシピ帳など） -->
+      <div class="overlay" id="overlay" hidden>
+        <div class="overlay__backdrop" id="overlay-backdrop"></div>
+        <div class="overlay__panel" id="overlay-panel"></div>
+      </div>
+
+      <div class="toast" id="toast" hidden></div>
+    </div>
+    <noscript>このゲームを遊ぶには JavaScript を有効にしてください。</noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

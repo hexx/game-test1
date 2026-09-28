@@ -1,0 +1,24 @@
+{
+  "name": "midnight-blend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "真夜中ブレンド - 深夜喫茶のビジュアルノベル(ブラウザゲーム)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "deploy": "node scripts/deploy-guard.mjs && wrangler deploy",
+    "cf-dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "jsdom": "^30.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.2",
+    "wrangler": "^4.142.0"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "midnight-blend",
+  "main": "src/worker.ts",
+  "compatibility_date": "2025-09-23",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  }
+  // 任意: エンディングの集計（みんなの記録）を有効にしたい場合のみ binding を足す。
+  // 1) npx wrangler kv namespace create ENDINGS
+  // 2) 出力された id を貼る
+  // "kv_namespaces": [{ "binding": "ENDINGS", "id": "<作成したnamespaceのid>" }]
+}

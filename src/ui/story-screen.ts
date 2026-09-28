@@ -18,6 +18,7 @@ export interface StoryDeps {
   onEnding: (id: EndingId) => void;
   onExitToTitle: () => void;
   openJournal: () => void;
+  openCast: () => void;
   openSettings: () => void;
   openHelp: () => void;
   loadSlot: (slot: SlotId) => void;
@@ -160,6 +161,7 @@ export class StoryScreen {
   }
 
   private addCast(who: CharId, slot: Slot, mood: Mood): void {
+    this.markMet(who);
     let node = this.cast.get(who);
     if (!node) {
       node = el('div', `sprite sprite--${slot}`);
@@ -173,6 +175,13 @@ export class StoryScreen {
     node.dataset.mood = mood;
     node.classList.remove('sprite--left', 'sprite--right', 'sprite--center', 'sprite--far-left', 'sprite--far-right');
     node.classList.add(`sprite--${slot}`);
+  }
+
+  /** 舞台に出た人を名鑑に登録する */
+  private markMet(who: CharId): void {
+    const met = this.deps.save.met ?? [];
+    if (met.includes(who)) return;
+    this.deps.save.met = [...met, who];
   }
 
   private removeCast(who: CharId): void {
@@ -319,6 +328,7 @@ export class StoryScreen {
       { label: 'セーブする', action: () => openSavesPanel('save', this.deps.save, { onSaved: () => toast('セーブしました') }) },
       { label: 'ロードする', action: () => openSavesPanel('load', this.deps.save, { onLoad: (slot) => this.deps.loadSlot(slot) }) },
       { label: 'レシピ帳', action: () => this.deps.openJournal() },
+      { label: '登場人物', action: () => this.deps.openCast() },
       { label: '設定', action: () => this.deps.openSettings() },
       { label: '履歴を見る', action: () => openLogPanel(this.backlog) },
       {

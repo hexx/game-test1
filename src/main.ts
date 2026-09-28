@@ -18,6 +18,7 @@ import { backgroundSVG } from './ui/backgrounds';
 import { el, qs } from './ui/dom';
 import { openEndingPanel } from './ui/ending-panel';
 import { closeOverlay, openOverlay, setupOverlay, toast } from './ui/overlay';
+import { openCharactersPanel } from './ui/characters-panel';
 import { openChaptersPanel, openHelpPanel, openJournalPanel, openSettingsPanel, openSavesPanel } from './ui/panels';
 import { StoryScreen } from './ui/story-screen';
 
@@ -94,6 +95,9 @@ class App {
           break;
         case 'journal':
           openJournalPanel(this.save);
+          break;
+        case 'cast':
+          openCharactersPanel(this.save);
           break;
         case 'settings':
           openSettingsPanel(this.settings, (s) => this.applySettings(s));
@@ -195,6 +199,7 @@ class App {
       onEnding: (id) => this.handleEnding(id),
       onExitToTitle: () => this.toTitle(),
       openJournal: () => openJournalPanel(this.save),
+      openCast: () => openCharactersPanel(this.save),
       openSettings: () => openSettingsPanel(this.settings, (s) => this.applySettings(s)),
       openHelp: () => this.openHelp(),
       loadSlot: (slot) => this.load(slot),
@@ -266,6 +271,7 @@ class App {
       onTitle: () => this.toTitle(),
       onReplay: () => this.startGame(save, 'finale'),
       onJournal: () => openJournalPanel(save),
+      onCast: () => openCharactersPanel(save),
     });
   }
 

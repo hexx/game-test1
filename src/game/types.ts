@@ -210,6 +210,8 @@ export interface SaveData {
   nightsDone: string[];
   /** フラグ */
   flags: Record<string, boolean | number | string>;
+  /** 名鑑に載った（舞台上で出会った）人物 */
+  met: CharId[];
   /** 常連との信頼度 */
   trust: Record<string, number>;
   /** 作った飲み物の履歴 */

@@ -38,6 +38,7 @@ export function createSave(name = 'カイ'): SaveData {
     name,
     nightsDone: [],
     flags: {},
+    met: [],
     trust: {},
     drinks: [],
     discovered: [],
@@ -170,6 +171,8 @@ function migrate(data: SaveData): SaveData {
   merged.hints = data.hints ?? [];
   merged.choices = data.choices ?? [];
   merged.nightsDone = data.nightsDone ?? [];
+  // met を持たない旧セーブは、信頼度から「会ったことがある人」を推定する
+  merged.met = data.met ?? (Object.keys(merged.trust) as SaveData['met']);
   merged.frames = data.frames ?? [];
   if (!Array.isArray(merged.frames) || merged.frames.length === 0) {
     merged.frames = [{ path: [], idx: 0 }];

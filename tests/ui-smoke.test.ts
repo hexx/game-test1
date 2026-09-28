@@ -54,6 +54,16 @@ describe('UI スモーク', () => {
     document.body.innerHTML = bodyHtml;
     await import('../src/main');
 
+    // タイトルから「登場人物」を開ける（まだ誰にも会っていない状態）
+    click($('button[data-action="cast"]'));
+    await waitFor(() => $('.panel--cast') !== null, 4000, '登場人物パネル');
+    const castPanel = $('.panel--cast')!;
+    expect(castPanel.querySelectorAll('.castbook__item').length).toBe(8);
+    expect(castPanel.querySelectorAll('.castbook__badge.is-met').length).toBe(0);
+    expect(castPanel.querySelector('.castbook__block-body.is-locked')?.textContent).toContain('？？？');
+    click($('.panel--cast .panel__foot .btn--primary'));
+    await waitFor(() => $('.panel--cast') === null, 4000, '登場人物を閉じる');
+
     // タイトル → 名前入力
     expect($('button[data-action="new"]')).toBeTruthy();
     click($('button[data-action="new"]'));
@@ -92,6 +102,31 @@ describe('UI スモーク', () => {
 
     // 立ち絵が出る（プロローグでガーネットが登場する）
     expect(await advanceUntil(() => $('.sprite svg') !== null)).toBe(true);
+
+    // 出会った人は名鑑に載る（メニュー → 登場人物）
+    click($('#btn-menu'));
+    await waitFor(() => $('.panel--menu') !== null, 4000, 'メニュー');
+    const castMenuButton = [...document.querySelectorAll<HTMLButtonElement>('.menu__btn')].find((b) =>
+      b.textContent?.includes('登場人物'),
+    );
+    click(castMenuButton!);
+    await waitFor(() => $('.panel--cast') !== null, 4000, '名鑑（本編から）');
+    const metPanel = $('.panel--cast')!;
+    const garnetItem = [...metPanel.querySelectorAll<HTMLElement>('.castbook__item')].find((b) =>
+      b.textContent?.includes('ガーネット'),
+    );
+    expect(garnetItem?.classList.contains('is-unmet')).toBe(false);
+    expect(metPanel.querySelectorAll('.castbook__badge.is-met').length).toBe(1);
+    // 本人の声が聴ける（ガーネットを選択して「ひとこと聴く」）
+    click(garnetItem!);
+    const voiceBtn = [...metPanel.querySelectorAll<HTMLButtonElement>('.castbook__voice .btn')].find(
+      (b) => b.textContent === 'ひとこと聴く',
+    );
+    expect(voiceBtn).toBeTruthy();
+    click(voiceBtn!);
+    expect($('.castbook__line')?.textContent ?? '').toMatch(/「.+」/);
+    click($('.panel--cast .panel__foot .btn--primary'));
+    await waitFor(() => $('.panel--cast') === null, 4000, '名鑑を閉じる');
 
     // 注文パネルまで進める（チュートリアルの一杯）
     expect(await advanceUntil(() => $('.panel--order') !== null)).toBe(true);

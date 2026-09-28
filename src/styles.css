@@ -760,6 +760,9 @@ button {
   position: relative;
   max-height: 100%;
   display: flex;
+  /* 幅は中の .panel--* が決める（ここで固定すると、はみ出しや左寄せの原因になる） */
+  width: fit-content;
+  max-width: 100%;
   opacity: 0;
   transform: translateY(14px) scale(0.98);
   transition: opacity 0.3s ease, transform 0.3s ease;
@@ -786,10 +789,7 @@ button {
   scrollbar-width: thin;
 }
 
-.panel--wide {
-  width: min(920px, 94vw);
-}
-
+/* 幅は各パネル（.panel--order / --cast / --help など）が個別に決める */
 .panel--narrow {
   width: min(440px, 90vw);
 }
@@ -1450,6 +1450,326 @@ button {
   width: 100%;
   justify-content: center;
   border-top: none;
+}
+
+/* ---------------------------- castbook（登場人物） ---------------------------- */
+.panel--cast {
+  width: min(1040px, 96vw);
+}
+
+.panel--journal,
+.panel--log {
+  width: min(760px, 94vw);
+}
+
+.panel--help {
+  width: min(860px, 94vw);
+}
+
+.castbook {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 18px;
+  min-height: 0;
+}
+
+.castbook__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0 4px 0 0;
+  list-style: none;
+  overflow: auto;
+  max-height: 58dvh;
+}
+
+.castbook__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: rgba(28, 23, 40, 0.55);
+  color: var(--ink-dim);
+  font-size: 13px;
+  text-align: left;
+  transition: all 0.16s ease;
+}
+
+.castbook__item:hover {
+  border-color: var(--amber);
+  color: var(--ink);
+}
+
+.castbook__item.is-active {
+  border-color: var(--amber);
+  background: rgba(240, 192, 116, 0.14);
+  color: var(--ink);
+}
+
+.castbook__item.is-unmet {
+  opacity: 0.62;
+}
+
+.castbook__thumb {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: radial-gradient(circle at 40% 30%, #3a3048, #1b1626);
+}
+
+.castbook__thumb svg {
+  width: 190%;
+  height: 190%;
+  transform: translate(-24%, -30%);
+}
+
+.castbook__item.is-unmet .castbook__thumb svg {
+  filter: grayscale(0.85) brightness(0.55);
+}
+
+.castbook__item-name {
+  flex: 1;
+  letter-spacing: 0.06em;
+}
+
+.castbook__item-lock {
+  color: var(--ink-faint);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+
+.castbook__detail {
+  display: flex;
+  gap: 18px;
+  min-height: 0;
+  overflow: auto;
+  max-height: 58dvh;
+  padding-right: 6px;
+}
+
+.castbook__portrait {
+  flex-shrink: 0;
+  width: 190px;
+  height: 250px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: radial-gradient(circle at 45% 28%, #3b3050 0%, #1a1526 70%);
+}
+
+.castbook__portrait svg {
+  height: 122%;
+  width: auto;
+  display: block;
+  margin-left: -8%;
+}
+
+.castbook__portrait.is-unmet svg {
+  filter: grayscale(0.85) brightness(0.55);
+}
+
+.castbook__info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.castbook__heading {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.castbook__name {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  letter-spacing: 0.12em;
+}
+
+.castbook__reading {
+  margin-left: 10px;
+  color: var(--ink-faint);
+  font-family: var(--font);
+  font-size: 11px;
+  letter-spacing: 0.24em;
+}
+
+.castbook__badge {
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink-faint);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+}
+
+.castbook__badge.is-met {
+  border-color: rgba(240, 192, 116, 0.6);
+  background: rgba(240, 192, 116, 0.14);
+  color: var(--amber);
+}
+
+.castbook__species {
+  margin: 0;
+  color: var(--cool);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.castbook__catch {
+  margin: 0;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.castbook__meta {
+  display: grid;
+  grid-template-columns: 6.5em 1fr;
+  gap: 5px 12px;
+  margin: 0;
+}
+
+.castbook__meta dt {
+  color: var(--ink-faint);
+  font-size: 11px;
+}
+
+.castbook__meta dd {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 12px;
+  line-height: 1.8;
+}
+
+.castbook__block {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: rgba(24, 19, 34, 0.6);
+}
+
+.castbook__block-title {
+  margin: 0 0 4px;
+  color: var(--ink-faint);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+}
+
+.castbook__block-body {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.castbook__block-body.is-secret {
+  color: var(--amber);
+}
+
+.castbook__block-body.is-locked {
+  color: var(--ink-faint);
+  letter-spacing: 0.08em;
+}
+
+.castbook__trust {
+  display: grid;
+  grid-template-columns: 3.5em 1fr 2em;
+  align-items: center;
+  gap: 10px;
+}
+
+.castbook__trust-name {
+  color: var(--ink-faint);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+}
+
+.castbook__trust-value {
+  color: var(--ink-faint);
+  font-size: 11px;
+  text-align: right;
+}
+
+.castbook__voice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.castbook__line {
+  margin: 0;
+  min-height: 3.4em;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+}
+
+.castbook__line.is-in {
+  animation: line-in 0.35s ease;
+}
+
+@keyframes line-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .castbook {
+    grid-template-columns: 1fr;
+  }
+
+  .castbook__list {
+    flex-direction: row;
+    max-height: none;
+    overflow-x: auto;
+    padding-bottom: 6px;
+  }
+
+  .castbook__item {
+    flex-direction: column;
+    width: auto;
+    min-width: 76px;
+    text-align: center;
+  }
+
+  .castbook__item-name {
+    font-size: 11px;
+  }
+
+  .castbook__detail {
+    flex-direction: column;
+    max-height: none;
+  }
+
+  .castbook__portrait {
+    width: 100%;
+    height: 210px;
+  }
+
+  .castbook__portrait svg {
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 /* ------------------------------- help ------------------------------- */

@@ -8,6 +8,7 @@ export interface EndingHandlers {
   onTitle: () => void;
   onReplay: () => void;
   onJournal: () => void;
+  onCast: () => void;
 }
 
 const ENDING_THEME: Record<EndingId, { color: string; art: string }> = {
@@ -69,6 +70,12 @@ export function openEndingPanel(id: EndingId, save: SaveData, handlers: EndingHa
     closeOverlay(true);
     handlers.onJournal();
   });
+  const cast = el('button', 'btn', '登場人物');
+  cast.type = 'button';
+  cast.addEventListener('click', () => {
+    closeOverlay(true);
+    handlers.onCast();
+  });
   const replay = el('button', 'btn', '終章から、もう一度');
   replay.type = 'button';
   replay.addEventListener('click', () => {
@@ -81,7 +88,7 @@ export function openEndingPanel(id: EndingId, save: SaveData, handlers: EndingHa
     closeOverlay(true);
     handlers.onTitle();
   });
-  foot.append(journal, replay, title);
+  foot.append(journal, cast, replay, title);
   panel.append(foot);
 
   openOverlay(panel, { dismissible: false, className: 'panel--narrow' });

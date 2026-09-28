@@ -19,6 +19,7 @@ export interface StoryDeps {
   onExitToTitle: () => void;
   openJournal: () => void;
   openSettings: () => void;
+  openHelp: () => void;
   loadSlot: (slot: SlotId) => void;
   notify: (message: string) => void;
 }
@@ -95,6 +96,7 @@ export class StoryScreen {
     qs('#btn-menu').addEventListener('click', () => this.openMenu());
     qs('#btn-log').addEventListener('click', () => openLogPanel(this.backlog));
     qs('#btn-journal').addEventListener('click', () => this.deps.openJournal());
+    qs('#btn-help').addEventListener('click', () => this.deps.openHelp());
   }
 
   private setAuto(value: boolean): void {
@@ -249,6 +251,7 @@ export class StoryScreen {
     const resolved = text.replace(/\{\{name\}\}/g, this.deps.save.name);
     this.backlog.push({ name: name || '――', text: resolved });
     if (this.backlog.length > 300) this.backlog.splice(0, this.backlog.length - 300);
+    this.showFirstTimeHint();
     await this.typewrite(resolved);
     qs('#next-mark').classList.add('is-visible');
     await this.waitAdvance();
@@ -298,12 +301,21 @@ export class StoryScreen {
     this.setAuto(wasAuto);
   }
 
+  /** 初回だけ、進め方をセリフ欄に出す */
+  private showFirstTimeHint(): void {
+    const hint = qs('#next-hint');
+    const seen = Number(this.deps.save.flags.__linesSeen ?? 0);
+    this.deps.save.flags.__linesSeen = seen + 1;
+    hint.hidden = seen >= 3 || this.skip;
+  }
+
   private openMenu(): void {
     if (isOverlayOpen()) return;
     const panel = el('div', 'panel panel--menu');
     panel.append(el('h2', 'panel__title', 'メニュー'));
     const buttons: { label: string; action: () => void }[] = [
       { label: 'つづける', action: () => closeOverlay() },
+      { label: 'あそびかた', action: () => this.deps.openHelp() },
       { label: 'セーブする', action: () => openSavesPanel('save', this.deps.save, { onSaved: () => toast('セーブしました') }) },
       { label: 'ロードする', action: () => openSavesPanel('load', this.deps.save, { onLoad: (slot) => this.deps.loadSlot(slot) }) },
       { label: 'レシピ帳', action: () => this.deps.openJournal() },

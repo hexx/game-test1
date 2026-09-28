@@ -18,7 +18,7 @@ import { backgroundSVG } from './ui/backgrounds';
 import { el, qs } from './ui/dom';
 import { openEndingPanel } from './ui/ending-panel';
 import { closeOverlay, openOverlay, setupOverlay, toast } from './ui/overlay';
-import { openChaptersPanel, openJournalPanel, openSettingsPanel, openSavesPanel } from './ui/panels';
+import { openChaptersPanel, openHelpPanel, openJournalPanel, openSettingsPanel, openSavesPanel } from './ui/panels';
 import { StoryScreen } from './ui/story-screen';
 
 const AUTOSAVE_INTERVAL = 20_000;
@@ -30,6 +30,7 @@ class App {
   story: StoryScreen | null = null;
   private lastTick = Date.now();
   private audioReady = false;
+  private helpTimer: number | null = null;
 
   boot(): void {
     setupOverlay();
@@ -88,6 +89,9 @@ class App {
             this.startGame(fresh, chapterId);
           });
           break;
+        case 'help':
+          this.openHelp();
+          break;
         case 'journal':
           openJournalPanel(this.save);
           break;
@@ -101,7 +105,7 @@ class App {
     if (!hasAnySave()) {
       cont.classList.add('is-disabled');
       cont.disabled = true;
-      note.textContent = '「はじめから」を選ぶと、名前を決めて夜が始まります。';
+      note.textContent = '「はじめから」→ 名前を決めると、夜が始まります。操作は「あそびかた」に。';
     }
   }
 
@@ -192,12 +196,35 @@ class App {
       onExitToTitle: () => this.toTitle(),
       openJournal: () => openJournalPanel(this.save),
       openSettings: () => openSettingsPanel(this.settings, (s) => this.applySettings(s)),
+      openHelp: () => this.openHelp(),
       loadSlot: (slot) => this.load(slot),
       notify: (message) => toast(message),
     });
     this.story = story;
     this.showScreen('game');
     void story.start();
+    // 初回だけ、操作説明を自動で開く（別の画面に移ったら開かない）
+    if (!this.settings.seenHelp) {
+      if (this.helpTimer !== null) window.clearTimeout(this.helpTimer);
+      this.helpTimer = window.setTimeout(() => {
+        this.helpTimer = null;
+        if (this.settings.seenHelp || this.story !== story) return;
+        this.openHelp();
+      }, 600);
+    }
+  }
+
+  /** 「あそびかた」を開き、閉じたら既読にする */
+  private openHelp(): void {
+    openHelpPanel(() => this.markHelpSeen());
+  }
+
+  private markHelpSeen(): void {
+    if (this.helpTimer !== null) {
+      window.clearTimeout(this.helpTimer);
+      this.helpTimer = null;
+    }
+    if (!this.settings.seenHelp) this.applySettings({ ...this.settings, seenHelp: true });
   }
 
   private load(slot: SlotId): void {
@@ -246,6 +273,10 @@ class App {
     this.story?.stop();
     this.story = null;
     this.engine = null;
+    if (this.helpTimer !== null) {
+      window.clearTimeout(this.helpTimer);
+      this.helpTimer = null;
+    }
     this.showScreen('title');
     audio.setAmbience('rain');
   }

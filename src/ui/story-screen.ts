@@ -1,9 +1,9 @@
 import { ambienceFor, audio } from '../audio/audio';
 import { CHARACTERS } from '../game/characters';
 import type { Engine, EngineEvent } from '../game/engine';
-import { RECIPES } from '../game/ingredients';
+import { INGREDIENT_MAP, RECIPES } from '../game/ingredients';
 import type { Settings, SlotId } from '../game/state';
-import type { BgId, CharId, EndingId, Mood, SaveData, Slot } from '../game/types';
+import type { BgId, CharId, EndingId, IngredientId, Mood, SaveData, Slot } from '../game/types';
 import { backgroundSVG } from './backgrounds';
 import { recipeNameOf, runBrewPanel, showResultPanel } from './brew-panel';
 import { el, qs, sleep } from './dom';
@@ -165,6 +165,8 @@ export class StoryScreen {
       this.castLayer.append(node);
       this.cast.set(who, node);
       requestAnimationFrame(() => node?.classList.add('is-in'));
+    } else {
+      node.innerHTML = spriteSVG(who, mood);
     }
     node.dataset.mood = mood;
     node.classList.remove('sprite--left', 'sprite--right', 'sprite--center', 'sprite--far-left', 'sprite--far-right');
@@ -446,7 +448,15 @@ export class StoryScreen {
           hint: event.hint,
           showHints: this.deps.getSettings().showHints,
           discovered: this.deps.save.discovered
-            .map((id) => RECIPES.find((r) => r.id === id)?.name ?? '')
+            .map((id) => {
+              const recipe = RECIPES.find((r) => r.id === id);
+              if (!recipe) return '';
+              const names = recipe.key
+                .split('+')
+                .map((key) => INGREDIENT_MAP[key as IngredientId]?.name ?? key)
+                .join('・');
+              return `${recipe.name}（${names}）`;
+            })
             .filter(Boolean),
         };
         const { drink, art } = await runBrewPanel(view);

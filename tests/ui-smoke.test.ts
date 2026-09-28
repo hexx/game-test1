@@ -70,5 +70,19 @@ describe('UI スモーク', () => {
       6000,
       '次のセリフ',
     );
-  }, 20000);
+
+    // 背景が描画されている
+    expect(document.querySelector('#bg-layer .bg__svg')).toBeTruthy();
+
+    // しばらく進めると立ち絵が出る（プロローグでガーネットが登場する）
+    for (let i = 0; i < 24 && !document.querySelector('#cast .sprite'); i += 1) {
+      document.querySelector<HTMLElement>('#stage')!.dispatchEvent(
+        new MouseEvent('pointerdown', { bubbles: true }),
+      );
+      await new Promise((resolve) => window.setTimeout(resolve, 120));
+    }
+    const sprite = document.querySelector('#cast .sprite');
+    expect(sprite).toBeTruthy();
+    expect(sprite!.querySelector('svg')).toBeTruthy();
+  }, 30000);
 });

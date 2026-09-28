@@ -23,6 +23,7 @@
 
 | 設定 | 値 |
 | --- | --- |
+| 既定ブランチの ruleset | `main`（id `24103957`）: `deletion` / `non_fast_forward` / `pull_request`（承認 0 = ソロ運用可） / `required_status_checks`（context: `verify`, `strict` は false） |
 | Git アカウント / リポジトリ | （接続時に記入） |
 | production branch | `main` |
 | Build command | `npm run build` |
@@ -46,6 +47,23 @@
 ```
 npm run build   # tsc --noEmit + vite build → dist/
 npm run deploy  # deploy-guard → wrangler deploy
+```
+
+### main の保護（必須）
+
+`main` には ruleset が効いており、**PR 以外の変更は GitHub 側で拒否される**（`GH013: Changes must be made through a pull request`）。
+必須ステータスチェックは CI のジョブ名 `verify`（`.github/workflows/ci.yml`）。承認者 0 なので、ソロでも自分でマージできる。
+
+```
+gh api repos/<owner>/<repo>/rules/branches/main --jq '[.[].type]'
+# => ["deletion","non_fast_forward","pull_request","required_status_checks"]
+```
+
+ruleset を当て直す / 作り直す場合（**外部設定の変更なので、実行前に現状を読むこと**）:
+
+```
+bash <workers-builds-deploy skill>/assets/ruleset-apply.sh <owner/repo> verify --dry-run
+bash <workers-builds-deploy skill>/assets/ruleset-apply.sh <owner/repo> verify
 ```
 
 ### 緊急時（手元から反映）
@@ -78,4 +96,5 @@ npx wrangler kv namespace create ENDINGS
 - `npm run typecheck`
 - `npm run build` が成果物 `dist/` を生成する
 - ローカルからの `npm run deploy` がガードで中止される（`ALLOW_LOCAL_DEPLOY=1` で例外）
+- `main` への直接 push が GitHub に拒否される（`GH013`）／PR では `verify` が必須チェックとして表示される
 - `npx wrangler dev` で `/api/health` が `{"ok":true,...}` を返す

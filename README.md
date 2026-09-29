@@ -98,6 +98,9 @@ npx wrangler kv namespace create ENDINGS
 
 ## 開発メモ（つまずきやすい点）
 
+- `main` は ruleset で保護されている（**PR 必須 + 必須チェック `verify`**）。直接 push は GitHub に拒否されるので、
+  変更は必ずブランチを切って PR にする。適用内容は `docs/specs/deploy.md` §3 を参照（外部設定の写し）。
+
 - `hidden` 属性はブラウザ既定（UAオリジン）のスタイルなので、**作者CSSの `display` 指定に負ける**。
   `.overlay { display: grid }` のような指定があると `hidden` が効かず、「透明な全画面オーバーレイが
   クリックを吸い続ける」事故になる。そのため `src/styles.css` の先頭で
